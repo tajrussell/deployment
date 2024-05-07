@@ -27,6 +27,20 @@ btaglayout(dqmitems, "00 - Jet Properties",
   { 'path': "Btag/DeepFlavour_BvsAll_GLOBAL/jetPhi_diffEff_DeepFlavour_BvsAll_GLOBALALL",
     'description': "DeepFlavour Jet Phi efficiency",
     'draw': { 'withref': "no", 'ymin': '0', 'ymax': '1' }}
+ ],
+
+[{ 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/jetPhi_diffEff_ParticleTransformer_BvsAll_GLOBALALL",
+    'description': "ParticleTransformer Jet Phi efficiency",
+    'draw': { 'withref': "no", 'ymin': '0', 'ymax': '1' }},
+  { 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/jetEta_diffEff_ParticleTransformer_BvsAll_GLOBALALL",
+    'description': "ParticleTransformer Jet Eta efficiency",
+    'draw': { 'withref': "no", 'ymin': '0', 'ymax': '1' }},
+  { 'path': "Btag/ParticleNet_BvsAll_GLOBAL/jetPhi_diffEff_ParticleNet_BvsAll_GLOBALALL",
+    'description': "ParticleNet Jet Phi efficiency",
+    'draw': { 'withref': "no", 'ymin': '0', 'ymax': '1' }},
+  { 'path': "Btag/ParticleNet_BvsAll_GLOBAL/jetEta_diffEff_ParticleNet_BvsAll_GLOBALALL",
+    'description': "ParticleNet Jet Eta efficiency",
+    'draw': { 'withref': "no", 'ymin': '0', 'ymax': '1' }}
  ])
 
 
@@ -118,6 +132,28 @@ btaglayout(dqmitems, "04 - Discriminator Summary",
   { 'path': "Btag/DeepFlavour_CvsL_GLOBAL/discr_DeepFlavour_CvsL_GLOBALALL",
     'description': "Discriminator for DeepFlavour CvsL ",
     'draw': { 'withref': "no" }}
+ ]
+
+  [{ 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/discr_ParticleTransformer_BvsAll_GLOBALALL",
+    'description': "Discriminator for ParticleTransformer BvsAll ",
+    'draw': { 'withref': "no" }},
+  { 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/discr_ParticleTransformer_CvsB_GLOBALALL",
+    'description': "Discriminator for ParticleTransformer CvsB ",
+    'draw': { 'withref': "no" }},
+  { 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/discr_ParticleTransformer_CvsL_GLOBALALL",
+    'description': "Discriminator for ParticleTransformer CvsL ",
+    'draw': { 'withref': "no" }}
+ ],
+
+  [{ 'path': "Btag/ParticleNet_BvsAll_GLOBAL/discr_ParticleNet_BvsAll_GLOBALALL",
+    'description': "Discriminator for ParticleNet BvsAll ",
+    'draw': { 'withref': "no" }},
+  { 'path': "Btag/ParticleNet_CvsB_GLOBAL/discr_ParticleNet_CvsB_GLOBALALL",
+    'description': "Discriminator for ParticleNet CvsB ",
+    'draw': { 'withref': "no" }},
+  { 'path': "Btag/ParticleNet_CvsL_GLOBAL/discr_ParticleNet_CvsL_GLOBALALL",
+    'description': "Discriminator for ParticleNet CvsL ",
+    'draw': { 'withref': "no" }}
  ])
 
 
@@ -206,5 +242,33 @@ btaglayout(dqmitems, "07 - ROC Curves",
   { 'path': "Btag/DeepFlavour_CvsL_GLOBAL/FlavEffVsCEff_DUSG_discr_DeepFlavour_CvsL_GLOBAL",
     'overlays': ["Btag/DeepFlavour_CvsL_GLOBAL/FlavEffVsCEff_B_discr_DeepFlavour_CvsL_GLOBAL"],
     'description': "DeepFlavour ROC Curve CvsL",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+ ],
+
+ [{ 'path': "Btag/ParticleTransformer_BvsAll_GLOBAL/FlavEffVsBEff_DUSG_discr_ParticleTransformer_BvsAll_GLOBAL",
+    'overlays': ["Btag/ParticleTransformer_BvsAll_GLOBAL/FlavEffVsBEff_C_discr_ParticleTransformer_BvsAll_GLOBAL"],
+    'description': "ParticleTransformer ROC Curve BvsAll",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+  { 'path': "Btag/ParticleTransformer_CvsB_GLOBAL/FlavEffVsCEff_DUSG_discr_ParticleTransformer_CvsB_GLOBAL",
+    'overlays': ["Btag/ParticleTransformer_CvsB_GLOBAL/FlavEffVsCEff_B_discr_ParticleTransformer_CvsB_GLOBAL"],
+    'description': "ParticleTransformer ROC Curve CvsB",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+  { 'path': "Btag/ParticleTransformer_CvsL_GLOBAL/FlavEffVsCEff_DUSG_discr_ParticleTransformer_CvsL_GLOBAL",
+    'overlays': ["Btag/ParticleTransformer_CvsL_GLOBAL/FlavEffVsCEff_B_discr_ParticleTransformer_CvsL_GLOBAL"],
+    'description': "ParticleTransformer ROC Curve CvsL",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+ ],
+
+ [{ 'path': "Btag/ParticleNet_BvsAll_GLOBAL/FlavEffVsBEff_DUSG_discr_ParticleNet_BvsAll_GLOBAL",
+    'overlays': ["Btag/ParticleNet_BvsAll_GLOBAL/FlavEffVsBEff_C_discr_ParticleNet_BvsAll_GLOBAL"],
+    'description': "ParticleNet ROC Curve BvsAll",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+  { 'path': "Btag/ParticleNet_CvsB_GLOBAL/FlavEffVsCEff_DUSG_discr_ParticleNet_CvsB_GLOBAL",
+    'overlays': ["Btag/ParticleNet_CvsB_GLOBAL/FlavEffVsCEff_B_discr_ParticleNet_CvsB_GLOBAL"],
+    'description': "ParticleNet ROC Curve CvsB",
+    'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
+  { 'path': "Btag/ParticleNet_CvsL_GLOBAL/FlavEffVsCEff_DUSG_discr_DeepFlavour_CvsL_GLOBAL",
+    'overlays': ["Btag/ParticleNet_CvsL_GLOBAL/FlavEffVsCEff_B_discr_ParticleNet_CvsL_GLOBAL"],
+    'description': "ParticleNet ROC Curve CvsL",
     'draw': {'withref': "no", 'xmin': '0.1', 'xmax': '1', 'xtype': 'log', 'ytype': 'log'}},
  ])
