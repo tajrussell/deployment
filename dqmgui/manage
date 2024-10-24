@@ -13,6 +13,7 @@
 ##H   stop            stop the service
 ##H   compile         refresh render plugins
 ##H   indexbackup     backup the index to CASTOR
+##H   indexmonitor    check how full the index is and send an email if a threshold is exceeded
 ##H   zipbackup       backup new root files to CASTOR
 ##H   zipbackupcheck  check if the backup of the root files to castor was successful
 ##H
@@ -27,7 +28,7 @@
 ##H
 ##H Options:
 ##H -f flavor     Overide default flavor selected by server and domain.
-##H               Flavors are: {online, offline, relval, dev}
+##H               Flavors are: {online, offline, relval, dev and offline-relval-testing}
 ##H For more details please refer to operations page:
 ##H   https://twiki.cern.ch/twiki/bin/view/CMS/DQMGui
 
@@ -73,15 +74,9 @@ export STAGE_SVCCLASS=archive
 # when trying to load any DQM GUI instance
 # commenting them works perfectly fine since users alrady have a kerberos token by default
 _kerberos_init() {
-  # TODO: This might need to be adjusted in the future
-  export keytab=/data/srv/current/auth/wmcore-auth/keytab
-  principal=$(klist -k "$keytab" | tail -1 | awk '{print $2}')
-  kinit $principal -k -t "$keytab" 2>&1 1>&/dev/null
-  if [ $? = 1 ]; then
-    echo "Unable to perform kinit."
-    echo "If you are installing a DQM GUI on lxplus or any other private machine, please comment lines from this block and proceed as usual"
-    exit 1
-  fi
+  # Use source here so that the exit command works and
+  # can terminate execution when needed.
+  source "$TOP/current/config/dqmgui/kinit.sh"
 }
 # Set Flavor for HOST:DOMAIN
 case $HOST:$DOMAIN in
@@ -102,6 +97,18 @@ vocms0739:*)
 vocms0731:*)
   FLAVOR=offline-relval-testing
   ALTERNATIVE_USER='cmsweb'
+  _kerberos_init
+  ;;
+vocms0730:*)
+  FLAVOR=offline-relval-testing
+  _kerberos_init
+  ;;
+vocms0736:*)
+  FLAVOR=offline
+  _kerberos_init
+  ;;
+vocms0737:*)
+  FLAVOR=relval
   _kerberos_init
   ;;
 # Private instances get the dev flavor, unless specified differently
@@ -129,7 +136,7 @@ message() {
   esac
 }
 
-# Procedure witch will check if a process is not already running before starting it
+# Procedure which will check if a process is not already running before starting it
 refuseproc() {
   local title="$1" pat="$2" reason="$3"
   if [ $(pgrep -u $(id -u) -f "$pat" | wc -l) != 0 ]; then
@@ -235,21 +242,24 @@ startagent() {
   shift
   # Keep old way for vocms machines, until they are updated
   # TODO: Remove after migration of vocms machines to newer OS
-  if echo $HOST | grep -q "vocms"; then
+  case $HOST in
+  vocms0731 | vocms0738 | vocms0739)
     (
       [ ! -z $edition ] && source $ROOT/apps/dqmgui/$edition/etc/profile.d/env.sh
       set -x
       date
       exec "$@"
     ) </dev/null 2>&1 | rotatelogs $LOGDIR/$logstem-%Y%m%d-$(hostname -s).log 86400 >/dev/null 2>&1 &
-  else
+    ;;
+  *)
     (
       [ ! -z $edition ] && source $ROOT/apps/dqmgui/$edition/etc/profile.d/env.sh
       set -x
       date
       exec "$@"
     ) </dev/null >>$LOGDIR/$logstem-$(hostname -s).log 2>&1 &
-  fi
+    ;;
+  esac
 }
 
 # Start service conditionally on crond restart.
@@ -323,7 +333,7 @@ start_agents() {
   #   online to offline
   # note that the agents to copy zip to castor, verify zip from castor and
   # copy index to castor run as tasks under acron.
-  vocms0738:*agents*)
+  vocms0738:*agents* | vocms0736:*agents*)
     start_agents_offline
     ;;
   ##### OFFLINE: relval server vocms0739 (CC7)
@@ -333,10 +343,10 @@ start_agents() {
   # - the zip and zipfreeze daemons
   # Note that the agents to copy zip to Castor, verify zip from Castor and
   # copy index to Castor run as tasks under acron.
-  vocms0739:*agents*)
+  vocms0739:*agents* | vocms0737:*agents*)
     start_agents_relval
     ;;
-  ##### OFFLINE: test server vocms0731
+  ##### OFFLINE: test server vocms0731, vocms0730
   # This server runs 3 gui's in 3 flavors: dev, offline and relval
   # The test server runs
   # - the standard receive and import daemons
@@ -346,7 +356,7 @@ start_agents() {
   # - the acron tasks that do the backups to Castor
   # We also keep a local backup of the index (rsynced by the import
   # daemon).
-  vocms0731:*agents*)
+  vocms0731:*agents* | vocms0730:*agents*)
     start_agents_offline_relval_test
     ;;
   ##### PRIVATE or DEVELOPMENT instances
@@ -437,11 +447,10 @@ start_agents_dqm_test() {
     $STATEDIR/online/ix128
 }
 
-# vocms0738
+# vocms0738, vocms0736
 start_agents_offline() {
   refuseproc "file agents" "visDQMIndex|[^/]zip +|OnlineSync|visDQMCreateInfo" "refusing to restart"
   for D in $CONFIGS; do
-    D=${D}
     DQM_DATA=$STATEDIR/$D
 
     startagent $D/agent-receive \
@@ -456,7 +465,7 @@ start_agents_offline() {
       $DQM_DATA/agents/register \
       $DQM_DATA/data \
       $DQM_DATA/ix128 \
-      --min_run 365753 \
+      --min_run 376824 \
       --next $DQM_DATA/agents/qcontrol $DQM_DATA/agents/vcontrol \
       --rsync \
       --rsyncnext $DQM_DATA/agents/ixstageout \
@@ -503,11 +512,10 @@ start_agents_offline() {
   done
 }
 
-# vocms0739
+# vocms0739, vocms0737
 start_agents_relval() {
   refuseproc "file agents" "visDQMIndex|[^/]zip +" "refusing to restart"
   for D in $CONFIGS; do
-    D=${D}
     DQM_DATA=$STATEDIR/$D
 
     startagent $D/agent-receive \
@@ -555,11 +563,10 @@ start_agents_relval() {
   done
 }
 
-# vocms0731
+# vocms0731, vocms0730
 start_agents_offline_relval_test() {
   refuseproc "file agents" "visDQMIndex" "refusing to restart"
   for D in $CONFIGS; do
-    D=${D}
     DQM_DATA=$STATEDIR/$D
 
     if [ "$D" = "dev" ]; then
@@ -631,7 +638,6 @@ start_agents_offline_relval_test() {
 start_agents_local_development() {
   refuseproc "file agents" "visDQMIndex" "refusing to restart"
   for D in $CONFIGS; do
-    D=${D}
     DQM_DATA=$STATEDIR/$D
     startagent $D/agent-receive \
       visDQMReceiveDaemon \
@@ -663,36 +669,38 @@ start_agents_local_development() {
 start_collector() {
   # Note that the setup of the port to which a specific server is listening is
   # not done here, but instead in the specific server config file.
-  case $FLAVOR:$HOST:${1:-collector} in
-  # Online servers: Collector for the first one, no collector for the other two:
-  online:dqmsrv-c2a06-07-01:*collector*)
-    DQMCollector --listen 9090 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    ;;
-  # Playback server: Gets its own collector:
-  online:dqmsrv-c2a06-08-01:*collector*)
-    DQMCollector --listen 9090 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    ;;
-  # Hcal/Ecal server: Gets its own collector (checks hostname & username):
-  online:dqmfu-c2b02-46-01:*collector*)
-    if echo "$USER" | grep -qi "hcal"; then
-      DQMCollector --listen 9091 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    elif echo "$USER" | grep -qi "ecal"; then
-      DQMCollector --listen 9090 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    fi
-    ;;
-  # "Old" procedure (with rotatelogs) for vocms* machines
-  # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-  *:vocms*:*collector*)
-    DQMCollector --listen 8061 </dev/null 2>&1 | rotatelogs $LOGDIR/$FLAVOR/collector-%Y%m%d-$(hostname -s).log 86400 >/dev/null 2>&1 &
-    ;;
-  # Rest/default: Standard collector:
-  online:*:*collector*)
-    DQMCollector --listen 9190 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    ;;
-  *:*:*collector*)
-    DQMCollector --listen 8061 </dev/null >>$LOGDIR/$FLAVOR/collector-$(hostname -s).log 2>&1 &
-    ;;
-  esac
+  for CONFIG in $CONFIGS; do
+    case $CONFIG:$HOST:${1:-collector} in
+    # Online servers: Collector for the first one, no collector for the other two:
+    online:dqmsrv-c2a06-07-01:*collector*)
+      DQMCollector --listen 9090 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      ;;
+    # Playback server: Gets its own collector:
+    online:dqmsrv-c2a06-08-01:*collector*)
+      DQMCollector --listen 9090 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      ;;
+    # Hcal/Ecal server: Gets its own collector (checks hostname & username):
+    online:dqmfu-c2b02-46-01:*collector*)
+      if echo "$USER" | grep -qi "hcal"; then
+        DQMCollector --listen 9091 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      elif echo "$USER" | grep -qi "ecal"; then
+        DQMCollector --listen 9090 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      fi
+      ;;
+    # "Old" procedure (with rotatelogs) for vocms* machines
+    # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
+    *:vocms0731*:*collector* | *:vocms0738*:*collector* | *:vocms0739*:*collector*)
+      DQMCollector --listen 8061 </dev/null 2>&1 | rotatelogs $LOGDIR/$CONFIG/collector-%Y%m%d-$(hostname -s).log 86400 >/dev/null 2>&1 &
+      ;;
+    # Rest/default: Standard collector:
+    online:*:*collector*)
+      DQMCollector --listen 9190 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      ;;
+    *:*:*collector*)
+      DQMCollector --listen 8061 </dev/null >>$LOGDIR/$CONFIG/collector-$(hostname -s).log 2>&1 &
+      ;;
+    esac
+  done
 }
 
 # Stop the service.
@@ -753,9 +761,11 @@ status() {
   # Now managed by rotatelogs
   case ${1:-logger} in *logger*)
     # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-    if echo $HOST | grep -q "vocms"; then
+    case $HOST in
+    vocms0731 | vocms0738 | vocms0739)
       statproc "$ME loggers" "rotatelogs"
-    fi
+      ;;
+    esac
     ;;
   esac
 }
@@ -785,9 +795,11 @@ detailstatus() {
   # Now managed by rotatelogs
   case ${1:-logger} in *logger*)
     # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-    if echo $HOST | grep -q "vocms"; then
+    case $HOST in
+    vocms0731 | vocms0738 | vocms0739)
       sdproc "$ME loggers" "rotatelogs"
-    fi
+      ;;
+    esac
     ;;
   esac
 }
@@ -796,6 +808,16 @@ detailstatus() {
 compile() {
   for CONFIG in $CONFIGS; do
     monControl rebuild all from $CFGDIR/server-conf-$CONFIG.py
+  done
+}
+
+# Monitor index size and send email alerts
+indexmonitor() {
+  refuseproc "index monitoring" "visDQMIndexMonitoring"
+  for D in $CONFIGS; do
+    DQM_DATA=$STATEDIR/$D
+    LOGSTEM=$D/agent-indexmonitor
+    visDQMIndexMonitoring FLAVOR="$D" INSTALLATION_DIR="$TOP" ALERT_THRESHOLD="0.95" >>"$LOGDIR/$LOGSTEM-$(hostname -s).log" 2>&1
   done
 }
 
@@ -809,7 +831,7 @@ indexbackup() {
     # Set default CASTOR directory to a testing area. Only the production
     # servers (Offline and Relval and Dev) get the real thing.
     case $HOST:$D in
-    vocms0731:dev | vocms0738:offline | vocms0739:relval)
+    vocms0731:dev | vocms0730:dev | vocms0738:offline | vocms0739:relval | vocms0736:offline | vocms0737:relval)
       CASTORDIR=/eos/cms/store/group/comm_dqm/DQMGUI_Backup/ixbackup/$D
       ;;
     *)
@@ -819,11 +841,11 @@ indexbackup() {
     # We run the backup everywhere when the backup method is called,
     # except for the offline and relval flavor on the dev server.
     case $HOST:$D in
-    vocms0731:offline | vocms0731:relval) ;;
+    vocms0731:offline | vocms0730:offline | vocms0731:relval | vocms0730:relval) ;;
 
-    # Keep "old" procedure in vocms machines.
+    # Keep "old" procedure in CC7 vocms machines (excl. vocms0730).
     # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-    vocms073*:*)
+    vocms0731:* | vocms0738:* | vocms0739:*)
       DQM_DATA=$STATEDIR/$D
       LOGSTEM=$D/agent-castorindexbackup
       # Start the process not as an agent, but directly in the current thread.
@@ -847,7 +869,7 @@ indexbackup() {
         $DQM_DATA/ix128 \
         $CASTORDIR \
         cms-dqm-coreTeam@cern.ch \
-        </dev/null 2>&1 >$LOGDIR/$LOGSTEM-$(printf '%(%Y%m%d)T' -1)-$(hostname -s).log
+        </dev/null >>"$LOGDIR/$LOGSTEM-$(hostname -s).log" 2>&1
       ;;
     esac
   done
@@ -862,7 +884,7 @@ zipbackup() {
     # Set default CASTOR directory to a testing area. Only the production
     # servers (Offline and Relval and Dev) get the real thing.
     case $HOST:$D in
-    vocms0731:dev | vocms0738:offline | vocms0739:relval)
+    vocms0731:dev | vocms0730:dev | vocms0738:offline | vocms0739:relval | vocms0736:offline | vocms0737:relval)
       CASTORDIR=/eos/cms/store/group/comm_dqm/DQMGUI_Backup/data/$D
       ;;
     *)
@@ -872,10 +894,10 @@ zipbackup() {
     # We run the backup everywhere when the backup method is called,
     # except for the offline and relval flavor on the dev server.
     case $HOST:$D in
-    vocms0731:offline | vocms0731:relval) ;;
+    vocms0731:offline | vocms0731:relval | vocms0730:offline | vocms0730:relval) ;;
     # Keep "old" procedure in vocms machines.
     # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-    vocms073*:*)
+    vocms0731:* | vocms0738:* | vocms0739:*)
       DQM_DATA=$STATEDIR/$D
       LOGSTEM=$D/agent-castorzipbackup
       # Start the process not as an agent, but directly in the current thread.
@@ -897,7 +919,7 @@ zipbackup() {
         $DQM_DATA/zipped \
         $CASTORDIR \
         $DQM_DATA/agents/verify \
-        </dev/null 2>&1 >$LOGDIR/$LOGSTEM-$(printf '%(%Y%m%d)T' -1)-$(hostname -s).log
+        </dev/null >>"$LOGDIR/$LOGSTEM-$(hostname -s).log" 2>&1
       ;;
     esac
   done
@@ -912,7 +934,7 @@ zipbackupcheck() {
     # Set default CASTOR directory to a testing area. Only the production
     # servers (Offline and Relval and Dev) get the real thing.
     case $HOST:$D in
-    vocms0731:dev | vocms0738:offline | vocms0739:relval)
+    vocms0731:dev | vocms0730:dev | vocms0738:offline | vocms0739:relval | vocms0736:offline | vocms0737:relval)
       CASTORDIR=/eos/cms/store/group/comm_dqm/DQMGUI_Backup/data/$D
       ;;
     *)
@@ -922,9 +944,9 @@ zipbackupcheck() {
     # We run the backup everywhere when the backup method is called,
     # except for the offline and relval flavor on the dev server.
     case $HOST:$D in
-    vocms0731:offline | vocms0731:relval) ;;
+    vocms0731:offline | vocms0731:relval | vocms0730:offline | vocms0730:relval) ;;
     # TODO: Remove after migration of vocms machines to newer OS (>=RHEL8).
-    vocms073*:*)
+    vocms0731:* | vocms0738:* | vocms0739:*)
       DQM_DATA=$STATEDIR/$D
       LOGSTEM=$D/agent-castorzipbackupcheck
       # Start the original agent process, however, not as an agent, but directly in the current thread.
@@ -952,7 +974,7 @@ zipbackupcheck() {
         $CASTORDIR \
         24 \
         $DQM_DATA/agents/clean \
-        </dev/null 2>&1 >$LOGDIR/$LOGSTEM-$(printf '%(%Y%m%d)T' -1)-$(hostname -s).log
+        </dev/null >>"$LOGDIR/$LOGSTEM-$(hostname -s).log" 2>&1
       ;;
     esac
   done
@@ -1001,7 +1023,7 @@ getconfigs
 CURRENT_USER=$(id -un)
 if [ -n "$ALTERNATIVE_USER" ]; then
   case $1 in
-  indexbackup | zipbackup | zipbackupcheck)
+  indexmonitor | indexbackup | zipbackup | zipbackupcheck)
     if [ "$CURRENT_USER" != "$ALTERNATIVE_USER" ]; then
       echo "ERROR: Trying to start $1 as normal user, use ALTERNATIVE_USER instead." 1>&2
       exit 1
@@ -1066,6 +1088,11 @@ xstop)
 indexbackup)
   check "$2"
   indexbackup
+  ;;
+
+indexmonitor)
+  check "$2"
+  indexmonitor
   ;;
 
 zipbackup)

@@ -22,13 +22,13 @@ ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/00 Summary',
 	   [{'path': 'EcalEndcap/EESummaryClient/EE global summary EE -', 'description': 'Summary of the data quality. A channel is red if it is red in any one of RawData, Integrity, Timing, TriggerPrimitives, and HotCells task. A cluster of bad towers in this plot will cause the ReportSummary for the FED to go to 0 in online DQM.'},
 	    {'path': 'EcalEndcap/EESummaryClient/EE global summary EE +', 'description': 'Summary of the data quality. A channel is red if it is red in any one of RawData, Integrity, Timing, TriggerPrimitives, and HotCells task. A cluster of bad towers in this plot will cause the ReportSummary for the FED to go to 0 in online DQM.'}])
 ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/01 FE Status',
-	   [{'path': 'EcalBarrel/EBSummaryClient/EBSFT front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}],
-	   [{'path': 'EcalEndcap/EESummaryClient/EESFT EE - front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'},
-	    {'path': 'EcalEndcap/EESummaryClient/EESFT EE + front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}])
+	   [{'path': 'EcalBarrel/EBSummaryClient/EBSFT front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}],
+	   [{'path': 'EcalEndcap/EESummaryClient/EESFT EE - front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'},
+	    {'path': 'EcalEndcap/EESummaryClient/EESFT EE + front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}])
 ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/02 Integrity',
-	   [{'path': 'EcalBarrel/EBSummaryClient/EBIT integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'}],
-	   [{'path': 'EcalEndcap/EESummaryClient/EEIT EE - integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'}, 
-	    {'path': 'EcalEndcap/EESummaryClient/EEIT EE + integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'}])
+	   [{'path': 'EcalBarrel/EBSummaryClient/EBIT integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'}],
+	   [{'path': 'EcalEndcap/EESummaryClient/EEIT EE - integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'}, 
+	    {'path': 'EcalEndcap/EESummaryClient/EEIT EE + integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'}])
 ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/03 Occupancy',
 	   [{'path': 'EcalBarrel/EBOccupancyTask/EBOT digi occupancy', 'description': 'Digi occupancy.'}],
 	   [{'path': 'EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE -', 'description': 'Digi occupancy.'},
@@ -61,6 +61,10 @@ ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/09 Laser 3 (Blue)',
 	   [{'path': 'EcalBarrel/EBSummaryClient/EBLT laser quality summary L3', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1, or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}],
 	   [{'path': 'EcalEndcap/EESummaryClient/EELT EE - laser quality summary L3', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1 (0.01 for Fwd regions), or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'},
 	    {'path': 'EcalEndcap/EESummaryClient/EELT EE + laser quality summary L3', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1 (0.01 for Fwd regions), or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}])
+ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/09 Laser 4 (Green2)',
+	   [{'path': 'EcalBarrel/EBSummaryClient/EBLT laser quality summary L4', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1, or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}],
+	   [{'path': 'EcalEndcap/EESummaryClient/EELT EE - laser quality summary L4', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1 (0.01 for Fwd regions), or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'},
+	    {'path': 'EcalEndcap/EESummaryClient/EELT EE + laser quality summary L4', 'description': 'Summary of the laser data quality. A channel is red either if mean / expected < 0.1 (0.01 for Fwd regions), or if mean / expected > 2.06, or if RMS / expected > 0.3, or if mean timing is off from expected by 1.0. Expected amplitudes and timings are 1700.0, 1300.0, 1700.0, 1700.0 and 4.2, 3.7, 4.2, 4.2 for lasers 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}])
 ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/10 Laser 2 PN',
 	   [{'path': 'EcalBarrel/EBSummaryClient/EBLT PN laser quality summary L2', 'description': 'Summary of the laser data quality in the PN diodes. A channel is red if mean / expected < 0.1 or RMS / expected > 1.0. Expected amplitudes are 800.0, 800.0, 800.0, 800.0 for laser 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}],
 	   [{'path': 'EcalEndcap/EESummaryClient/EELT PN laser quality summary L2', 'description': 'Summary of the laser data quality in the PN diodes. A channel is red if mean / expected < 0.1 or RMS / expected > 1.0. Expected amplitudes are 800.0, 800.0, 800.0, 800.0 for laser 1, 2, 3, and 4 respectively. Channels with less than 3 are not considered.'}])
@@ -85,9 +89,9 @@ ecallayout(dqmitems, 'Ecal/Layouts/00 Overview/14 Error Trends',
 
 #____________________ Layouts / 01 Raw Data ____________________
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/00 FEStatus Summary',
-	   [{'path': 'EcalBarrel/EBSummaryClient/EBSFT front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}],
-	   [{'path': 'EcalEndcap/EESummaryClient/EESFT EE - front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'},
-	    {'path': 'EcalEndcap/EESummaryClient/EESFT EE + front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has nonzero events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}])
+	   [{'path': 'EcalBarrel/EBSummaryClient/EBSFT front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}],
+	   [{'path': 'EcalEndcap/EESummaryClient/EESFT EE - front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'},
+	    {'path': 'EcalEndcap/EESummaryClient/EESFT EE + front-end status summary', 'description': 'Summary of the raw data (DCC and front-end) quality. A channel is red if it has 400 or more events with FE status that is different from any of ENABLED, DISABLED, SUPPRESSED, FIFOFULL, FIFOFULL_L1ADESYNC, and FORCEDZS. A FED can also go red if its number of L1A desynchronization errors is greater than 1.0 * log10(total entries).'}])
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/01 Total FE Sync Errors',
 	   [{'path': 'EcalBarrel/EBRawDataTask/EBRDT total FE synchronization errors', 'description': 'Total number of synchronization errors (L1A & BX mismatches) between DCC and FE.'}],
 	   [{'path': 'EcalEndcap/EERawDataTask/EERDT total FE synchronization errors', 'description': 'Total number of synchronization errors (L1A & BX mismatches) between DCC and FE.'}])
@@ -97,9 +101,9 @@ ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/02 FE Errors in this LS',
 	   [{'path': 'EcalEndcap/EERawDataTask/EERDT FE synchronization errors by lumi', 'description': 'Total number of synchronization errors (L1A & BX mismatches) between DCC and FE in this lumi section.'},
 	    {'path': 'EcalEndcap/EEStatusFlagsTask/FEStatus/EESFT weighted frontend errors by lumi', 'description': 'Total number of front-ends in error status in this lumi section.'}])
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/03 Integrity Summary',
-	   [{'path': 'EcalBarrel/EBSummaryClient/EBIT integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'}],
-	   [{'path': 'EcalEndcap/EESummaryClient/EEIT EE - integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'},
-	    {'path': 'EcalEndcap/EESummaryClient/EEIT EE + integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if there are more than 50 DCC-SRP or DCC-TCC Desync errors.'}])
+	   [{'path': 'EcalBarrel/EBSummaryClient/EBIT integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'}],
+	   [{'path': 'EcalEndcap/EESummaryClient/EEIT EE - integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'},
+	    {'path': 'EcalEndcap/EESummaryClient/EEIT EE + integrity quality summary', 'description': 'Summary of the data integrity. A channel is red if more than 0.01 of its entries have integrity errors. Also, an entire SuperModule can show red if more than 0.01 of its entries have DCC-SRP or DCC-TCC Desync errors.'}])
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/04 Total Integrity Errors',
 	   [{'path': 'EcalBarrel/EBSummaryClient/EBIT integrity quality errors summary', 'description': 'Total number of integrity errors for each FED.'}],
 	   [{'path': 'EcalEndcap/EESummaryClient/EEIT integrity quality errors summary', 'description': 'Total number of integrity errors for each FED.'}])
@@ -142,7 +146,17 @@ ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/14 FE MEM Status Flags',
          'description': 'Front-end (FE) status counter for MEM boxes. Each x-axis tick corresponds to one SuperModule (SM) as indexed by DCC Id and contains two bins corresponding to the MEM boxes (DCC tower Ids = 69, 70). Nominal status is SUPPRESSED. EE+/-2,3,7,8 are not connected to MEM boxes and instead appear with status DISABLED. Mapping from DCC Id to SM name appears below.<br/><pre>01:EE-07  19:EB-10  37:EB+10<br/>02:EE-08  20:EB-11  38:EB+11<br/>03:EE-09  21:EB-12  39:EB+12<br/>04:EE-01  22:EB-13  40:EB+13<br/>05:EE-02  23:EB-14  41:EB+14<br/>06:EE-03  24:EB-15  42:EB+15<br/>07:EE-04  25:EB-16  43:EB+16<br/>08:EE-05  26:EB-17  44:EB+17<br/>09:EE-06  27:EB-18  45:EB+18<br/>10:EB-01  28:EB+01  46:EE+07<br/>11:EB-02  29:EB+02  47:EE+08<br/>12:EB-03  30:EB+03  48:EE+09<br/>13:EB-04  31:EB+04  49:EE+01<br/>14:EB-05  32:EB+05  50:EE+02<br/>15:EB-06  33:EB+06  51:EE+03<br/>16:EB-07  34:EB+07  52:EE+04<br/>17:EB-08  35:EB+08  53:EE+05<br/>18:EB-09  36:EB+09  54:EE+06</pre>'}])
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/15 MEM Integrity Errors',
 	   [{'path': 'Ecal/MEM/IntegrityTask MEMErrors',
-         'description': 'Integrity error and error type counter for MEM boxes. Each x-axis tick corresponds to one SuperModule (SM) as indexed by DCC Id and contains two bins corresponding to the MEM boxes (DCC tower Ids = 69, 70). Nominally, this plot should be empty. Mapping from DCC Id to SM name appears below.<br/><pre>01:EE-07  19:EB-10  37:EB+10<br/>02:EE-08  20:EB-11  38:EB+11<br/>03:EE-09  21:EB-12  39:EB+12<br/>04:EE-01  22:EB-13  40:EB+13<br/>05:EE-02  23:EB-14  41:EB+14<br/>06:EE-03  24:EB-15  42:EB+15<br/>07:EE-04  25:EB-16  43:EB+16<br/>08:EE-05  26:EB-17  44:EB+17<br/>09:EE-06  27:EB-18  45:EB+18<br/>10:EB-01  28:EB+01  46:EE+07<br/>11:EB-02  29:EB+02  47:EE+08<br/>12:EB-03  30:EB+03  48:EE+09<br/>13:EB-04  31:EB+04  49:EE+01<br/>14:EB-05  32:EB+05  50:EE+02<br/>15:EB-06  33:EB+06  51:EE+03<br/>16:EB-07  34:EB+07  52:EE+04<br/>17:EB-08  35:EB+08  53:EE+05<br/>18:EB-09  36:EB+09  54:EE+06</pre>'}])
+         'description': 'Integrity error and error type counter for MEM boxes. Each x-axis tick corresponds to one SuperModule (SM) as indexed by DEC Id and contains two bins corresponding to the MEM boxes (DCC tower Ids = 69, 70). Nominally, this plot should be empty. Mapping from DCC Id to SM name appears below.<br/><pre>01:EE-07  19:EB-10  37:EB+10<br/>02:EE-08  20:EB-11  38:EB+11<br/>03:EE-09  21:EB-12  39:EB+12<br/>04:EE-01  22:EB-13  40:EB+13<br/>05:EE-02  23:EB-14  41:EB+14<br/>06:EE-03  24:EB-15  42:EB+15<br/>07:EE-04  25:EB-16  43:EB+16<br/>08:EE-05  26:EB-17  44:EB+17<br/>09:EE-06  27:EB-18  45:EB+18<br/>10:EB-01  28:EB+01  46:EE+07<br/>11:EB-02  29:EB+02  47:EE+08<br/>12:EB-03  30:EB+03  48:EE+09<br/>13:EB-04  31:EB+04  49:EE+01<br/>14:EB-05  32:EB+05  50:EE+02<br/>15:EB-06  33:EB+06  51:EE+03<br/>16:EB-07  34:EB+07  52:EE+04<br/>17:EB-08  35:EB+08  53:EE+05<br/>18:EB-09  36:EB+09  54:EE+06</pre>'}])
+ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/16 DCC-TCC Desync Trend',
+        [{'path': 'Ecal/Trends/RawDataTask number of EBRDT bunch crossing TCC errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and TCC in EB.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EBRDT L1A TCC errors', 'description': 'Trend of the number of L1A value mismatches between DCC and TCC in EB.'}],
+        [{'path': 'Ecal/Trends/RawDataTask number of EERDT bunch crossing TCC errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and TCC in EE.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EERDT L1A TCC errors', 'description': 'Trend of the number of L1A value mismatches between DCC and TCC in EE.'}])
+ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/17 DCC-SRP Desync Trend',
+        [{'path': 'Ecal/Trends/RawDataTask number of EBRDT bunch crossing SRP errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and SRP in EB.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EBRDT L1A SRP errors', 'description': 'Trend of the number of L1A value mismatches between DCC and SRP in EB'}],
+        [{'path': 'Ecal/Trends/RawDataTask number of EERDT bunch crossing SRP errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and SRP in EE.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EERDT L1A SRP errors', 'description': 'Trend of the number of L1A value mismatches between DCC and SRP in EE'}])
 
 ecallayout(dqmitems, 'Ecal/Layouts/01 Raw Data/Desync Errors/00 CRC',
 	   [{'path': 'EcalBarrel/EBRawDataTask/EBRDT CRC errors', 'description': 'Number of CRC errors.'}],
@@ -460,30 +474,33 @@ ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/13 Super Cluster Energy Low',
 ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/14 Super Cluster Raw Energy Low',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC raw energy (low scale)', 'description': 'Energy distribution (raw) of the super clusters (low scale).'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC raw energy (low scale)', 'description': 'Energy distribution (raw) of the super clusters (low scale).'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/15 Super Cluster Seed Energy',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/15 Super Cluster Raw Energy High',
+       [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC raw energy (high scale)', 'description': 'Energy distribution (raw) of the super clusters (high scale).'}],
+       [{'path': 'EcalEndcap/EEClusterTask/EECLT SC raw energy (high scale)', 'description': 'Energy distribution (raw) of the super clusters (high scale).'}])
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/16 Super Cluster Seed Energy',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC seed crystal energy', 'description': 'Energy distribution of the crystals that seeded super clusters.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC seed crystal energy', 'description': 'Energy distribution of the crystals that seeded super clusters.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/16 Super Cluster R9',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/17 Super Cluster R9',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC R9', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC R9', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/17 Super Cluster R9 Raw',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/18 Super Cluster R9 Raw',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC R9 Raw', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC R9 Raw', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/18 Super Cluster R9 Full',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/19 Super Cluster R9 Full',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC R9 Full', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC R9 Full', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/19 Super Cluster R9 Full Raw',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/20 Super Cluster R9 Full Raw',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC R9 Full Raw', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC R9 Full Raw', 'description': 'Distribution of E_seed / E_3x3 of the super clusters.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/20 Super Cluster Size',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/21 Super Cluster Size',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC size', 'description': 'Distribution of the super cluster size (number of basic clusters)'},
 	    {'path': 'EcalBarrel/EBClusterTask/EBCLT SC size (crystal)', 'description': 'Distribution of the super cluster size (number of crystals).'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC size', 'description': 'Distribution of the super cluster size (number of basic clusters)'},
 	    {'path': 'EcalEndcap/EEClusterTask/EECLT SC size (crystal)', 'description': 'Distribution of the super cluster size (number of crystals).'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/21 Cluster Energy vs Seed Energy',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/22 Cluster Energy vs Seed Energy',
 	   [{'path': 'EcalBarrel/EBClusterTask/EBCLT SC energy vs seed crystal energy', 'description': 'Relation between super cluster energy and its seed crystal energy.'}],
 	   [{'path': 'EcalEndcap/EEClusterTask/EECLT SC energy vs seed crystal energy', 'description': 'Relation between super cluster energy and its seed crystal energy.'}])
-ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/22 di-Electron Mass',
+ecallayout(dqmitems, 'Ecal/Layouts/04 Energy/23 di-Electron Mass',
 	   [{'path': 'HLT/ObjectMonitor/MainShifter/di-Electron_Mass', 'description': 'HLT di-electron mass [from HLT DQM].'}])
 
 #____________________ Layouts / 04 Energy / PiZero ____________________
@@ -1046,6 +1063,16 @@ ecallayout(dqmitems, 'Ecal/Layouts/11 Trend/09 Timing rms',
 ecallayout(dqmitems, 'Ecal/Layouts/11 Trend/10 TTF4 Flag',
 	    [{'path': 'Ecal/Trends/TrigPrimClient EB number of TTs with TTF4 set', 'description':'Trend of the total number of TTs in this partition with TTF4 flag set.'}],
 	    [{'path': 'Ecal/Trends/TrigPrimClient EE number of TTs with TTF4 set', 'description':'Trend of the total number of TTs in this partition with TTF4 flag set.'}])
+ecallayout(dqmitems, 'Ecal/Layouts/11 Trend/11 DCC-TCC Desync Trend',
+        [{'path': 'Ecal/Trends/RawDataTask number of EBRDT bunch crossing TCC errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and TCC in EB.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EBRDT L1A TCC errors', 'description': 'Trend of the number of L1A value mismatches between DCC and TCC in EB.'}],
+        [{'path': 'Ecal/Trends/RawDataTask number of EERDT bunch crossing TCC errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and TCC in EE.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EERDT L1A TCC errors', 'description': 'Trend of the number of L1A value mismatches between DCC and TCC in EE.'}])
+ecallayout(dqmitems, 'Ecal/Layouts/11 Trend/12 DCC-SRP Desync Trend',
+        [{'path': 'Ecal/Trends/RawDataTask number of EBRDT bunch crossing SRP errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and SRP in EB.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EBRDT L1A SRP errors', 'description': 'Trend of the number of L1A value mismatches between DCC and SRP in EB'}],
+        [{'path': 'Ecal/Trends/RawDataTask number of EERDT bunch crossing SRP errors', 'description': 'Trend of the number of bunch crossing value mismatches between DCC and SRP in EE.'},
+         {'path': 'Ecal/Trends/RawDataTask number of EERDT L1A SRP errors', 'description': 'Trend of the number of L1A value mismatches between DCC and SRP in EE'}])
 
 #____________________ Layouts / 12 By SuperModule ____________________
 for (detector, label, maxchannel) in [('Endcap', 'EE', 9), ('Barrel', 'EB', 18)]: # Loop over EB,EE
